@@ -1041,26 +1041,33 @@ import java.util.Map;
       // We have already marked this ad as having failed to load, so ignore the request.
       return;
     }
-    int adState = adPlaybackState.adGroups[adGroupIndex].states[adIndexInAdGroup];
-    if (new ArrayList<Integer>(){{
-      add(AdPlaybackState.AD_STATE_UNAVAILABLE);
-      add(AdPlaybackState.AD_STATE_AVAILABLE);
-      add(AdPlaybackState.AD_STATE_PLAYED);
-    }}.contains(adState)) {
-      adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInAdGroup);
-      if (player.getCurrentAdIndexInAdGroup() == adIndexInAdGroup) {
-        // Calling stop on current ad, indicating ad was skipped, so skip the remaining ads as well
-        Log.d(TAG, "skipping remaining ads");
-        int adGroupCount = adPlaybackState.adGroups[adGroupIndex].count;
-        for (int i = adIndexInAdGroup + 1; i < adGroupCount; i += 1) {
-          adPlaybackState = adPlaybackState.withSkippedAd(adGroupIndex, i);
-        }
-      } else {
-        // Presumably calling stop on previous ad, which indicates previous ad finished and was not skipped
-        Log.d(TAG, "ad ended");
-        adPlaybackState = adPlaybackState.withAdResumePositionUs(0);
-      }
+    if (!configuration.skipAdGroupOnSkipAd) {
+      adPlaybackState =
+          adPlaybackState.withPlayedAd(adGroupIndex, adIndexInAdGroup).withAdResumePositionUs(0);
       updateAdPlaybackState();
+    } else {
+      int adState = adPlaybackState.adGroups[adGroupIndex].states[adIndexInAdGroup];
+      if (new ArrayList<Integer>() {{
+        add(AdPlaybackState.AD_STATE_UNAVAILABLE);
+        add(AdPlaybackState.AD_STATE_AVAILABLE);
+        add(AdPlaybackState.AD_STATE_PLAYED);
+      }}.contains(adState)) {
+        adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInAdGroup);
+        if (player.getCurrentAdIndexInAdGroup() == adIndexInAdGroup) {
+          // Calling stop on current ad, indicating ad was skipped, so skip the remaining ads as well
+          if (configuration.debugModeEnabled) {
+            Log.d(TAG, "skipping remaining ads");
+          }
+          int adGroupCount = adPlaybackState.adGroups[adGroupIndex].count;
+          for (int i = adIndexInAdGroup + 1; i < adGroupCount; i += 1) {
+            adPlaybackState = adPlaybackState.withSkippedAd(adGroupIndex, i);
+          }
+        } else {
+          // Presumably calling stop on previous ad, which indicates previous ad finished and was not skipped
+          adPlaybackState = adPlaybackState.withAdResumePositionUs(0);
+        }
+        updateAdPlaybackState();
+      }
     }
     if (!playingAd) {
       imaAdMediaInfo = null;
