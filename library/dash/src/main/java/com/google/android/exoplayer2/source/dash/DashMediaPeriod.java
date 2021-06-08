@@ -103,6 +103,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
   private DashManifest manifest;
   private int periodIndex;
   private List<EventStream> eventStreams;
+  private boolean ignoreEOFException;
 
   public DashMediaPeriod(
       int id,
@@ -788,6 +789,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
             drmEventDispatcher,
             loadErrorHandlingPolicy,
             mediaSourceEventDispatcher);
+    stream.setIgnoreEOFException(ignoreEOFException);
     synchronized (this) {
       // The map is also accessed on the loading thread so synchronize access.
       trackEmsgHandlerBySampleStream.put(stream, trackPlayerEmsgHandler);
@@ -890,6 +892,15 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
   @SuppressWarnings({"unchecked", "rawtypes"})
   private static ChunkSampleStream<DashChunkSource>[] newSampleStreamArray(int length) {
     return new ChunkSampleStream[length];
+  }
+
+  /**
+   * Sets whether EOF exceptions should be ignored by the stream loader. The default setting is {@code false}
+   *
+   * @param ignoreEOFException Whether EOF exceptions should be ignored by the stream loader.
+   */
+  public void setIgnoreEOFException(boolean ignoreEOFException) {
+    this.ignoreEOFException = ignoreEOFException;
   }
 
   private static final class TrackGroupInfo {

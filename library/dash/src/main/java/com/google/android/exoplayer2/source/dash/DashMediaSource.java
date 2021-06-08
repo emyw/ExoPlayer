@@ -110,6 +110,7 @@ public final class DashMediaSource extends BaseMediaSource {
     private long fallbackTargetLiveOffsetMs;
     @Nullable private ParsingLoadable.Parser<? extends DashManifest> manifestParser;
     private List<StreamKey> streamKeys;
+    private boolean ignoreEOFException;
     @Nullable private Object tag;
 
     /**
@@ -142,6 +143,7 @@ public final class DashMediaSource extends BaseMediaSource {
       fallbackTargetLiveOffsetMs = DEFAULT_FALLBACK_TARGET_LIVE_OFFSET_MS;
       compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
       streamKeys = Collections.emptyList();
+      ignoreEOFException = false;
     }
 
     /**
@@ -283,6 +285,17 @@ public final class DashMediaSource extends BaseMediaSource {
     }
 
     /**
+     * Sets whether EOF exceptions should be ignored by the stream loader. The default setting is {@code false}
+     *
+     * @param ignoreEOFException Whether EOF exceptions should be ignored by the stream loader.
+     * @return This factory, for convenience.
+     */
+    public Factory setIgnoreEOFException(boolean ignoreEOFException) {
+      this.ignoreEOFException = ignoreEOFException;
+      return this;
+    }
+
+    /**
      * Returns a new {@link DashMediaSource} using the current parameters and the specified
      * sideloaded manifest.
      *
@@ -344,7 +357,8 @@ public final class DashMediaSource extends BaseMediaSource {
           compositeSequenceableLoaderFactory,
           drmSessionManagerProvider.get(mediaItem),
           loadErrorHandlingPolicy,
-          fallbackTargetLiveOffsetMs);
+          fallbackTargetLiveOffsetMs,
+          ignoreEOFException);
     }
 
     /** @deprecated Use {@link #createMediaSource(MediaItem)} instead. */
@@ -410,7 +424,8 @@ public final class DashMediaSource extends BaseMediaSource {
           compositeSequenceableLoaderFactory,
           drmSessionManagerProvider.get(mediaItem),
           loadErrorHandlingPolicy,
-          fallbackTargetLiveOffsetMs);
+          fallbackTargetLiveOffsetMs,
+          ignoreEOFException);
     }
 
     @Override
@@ -444,6 +459,7 @@ public final class DashMediaSource extends BaseMediaSource {
 
   private final MediaItem mediaItem;
   private final boolean sideloadedManifest;
+  private final boolean ignoreEOFException;
   private final DataSource.Factory manifestDataSourceFactory;
   private final DashChunkSource.Factory chunkSourceFactory;
   private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
@@ -490,7 +506,8 @@ public final class DashMediaSource extends BaseMediaSource {
       CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory,
       DrmSessionManager drmSessionManager,
       LoadErrorHandlingPolicy loadErrorHandlingPolicy,
-      long fallbackTargetLiveOffsetMs) {
+      long fallbackTargetLiveOffsetMs,
+      boolean ignoreEOFException) {
     this.mediaItem = mediaItem;
     this.liveConfiguration = mediaItem.liveConfiguration;
     this.manifestUri = checkNotNull(mediaItem.playbackProperties).uri;
@@ -503,6 +520,7 @@ public final class DashMediaSource extends BaseMediaSource {
     this.loadErrorHandlingPolicy = loadErrorHandlingPolicy;
     this.fallbackTargetLiveOffsetMs = fallbackTargetLiveOffsetMs;
     this.compositeSequenceableLoaderFactory = compositeSequenceableLoaderFactory;
+    this.ignoreEOFException = ignoreEOFException;
     sideloadedManifest = manifest != null;
     manifestEventDispatcher = createEventDispatcher(/* mediaPeriodId= */ null);
     manifestUriLock = new Object();
@@ -563,6 +581,7 @@ public final class DashMediaSource extends BaseMediaSource {
     } else {
       dataSource = manifestDataSourceFactory.createDataSource();
       loader = new Loader("DashMediaSource");
+      loader.setIgnoreEOFException(this.ignoreEOFException);
       handler = Util.createHandlerForCurrentLooper();
       startLoadingManifest();
     }
@@ -596,6 +615,7 @@ public final class DashMediaSource extends BaseMediaSource {
             allocator,
             compositeSequenceableLoaderFactory,
             playerEmsgCallback);
+    mediaPeriod.setIgnoreEOFException(ignoreEOFException);
     periodsById.put(mediaPeriod.id, mediaPeriod);
     return mediaPeriod;
   }

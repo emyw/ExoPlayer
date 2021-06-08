@@ -96,6 +96,8 @@ public class ChunkSampleStream<T extends ChunkSource>
 
   /* package */ boolean loadingFinished;
 
+  private boolean ignoreEOFException;
+
   /**
    * Constructs an instance.
    *
@@ -134,6 +136,7 @@ public class ChunkSampleStream<T extends ChunkSource>
     this.mediaSourceEventDispatcher = mediaSourceEventDispatcher;
     this.loadErrorHandlingPolicy = loadErrorHandlingPolicy;
     loader = new Loader("ChunkSampleStream");
+    loader.setIgnoreEOFException(ignoreEOFException);
     nextChunkHolder = new ChunkHolder();
     mediaChunks = new ArrayList<>();
     readOnlyMediaChunks = Collections.unmodifiableList(mediaChunks);
@@ -350,6 +353,16 @@ public class ChunkSampleStream<T extends ChunkSource>
       embeddedSampleQueue.preRelease();
     }
     loader.release(this);
+  }
+
+  /**
+   * Sets whether EOF exceptions should be ignored by the loader. The default setting is {@code false}
+   *
+   * @param ignoreEOFException Whether EOF exceptions should be ignored by the loader.
+   */
+  public void setIgnoreEOFException(boolean ignoreEOFException) {
+    this.ignoreEOFException = ignoreEOFException;
+    loader.setIgnoreEOFException(ignoreEOFException);
   }
 
   @Override

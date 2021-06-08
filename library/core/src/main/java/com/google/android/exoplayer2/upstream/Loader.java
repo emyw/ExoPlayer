@@ -209,6 +209,8 @@ public final class Loader implements LoaderErrorThrower {
   @Nullable private LoadTask<? extends Loadable> currentTask;
   @Nullable private IOException fatalError;
 
+  private boolean ignoreEOFException;
+
   /**
    * @param threadNameSuffix A name suffix for the loader's thread. This should be the name of the
    *     component using the loader.
@@ -300,6 +302,15 @@ public final class Loader implements LoaderErrorThrower {
       downloadExecutorService.execute(new ReleaseTask(callback));
     }
     downloadExecutorService.shutdown();
+  }
+
+  /**
+   * Sets whether EOF exceptions should be ignored. The default setting is {@code false}
+   *
+   * @param ignoreEOFException Whether EOF exceptions should be ignored.
+   */
+  public void setIgnoreEOFException(boolean ignoreEOFException) {
+    this.ignoreEOFException = ignoreEOFException;
   }
 
   // LoaderErrorThrower implementation.
@@ -415,6 +426,12 @@ public final class Loader implements LoaderErrorThrower {
           TraceUtil.beginSection("load:" + loadable.getClass().getSimpleName());
           try {
             loadable.load();
+          } catch(java.io.EOFException e) {
+            if (ignoreEOFException) {
+              android.util.Log.e("Loader", "EOF Exception raised while loading source");
+            } else {
+              throw e;
+            }
           } finally {
             TraceUtil.endSection();
           }
