@@ -865,6 +865,16 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
   }
 
   /**
+   * Sets whether the controller displays remaining time instead of duration.
+   *
+   * @param controllerDisplayRemainingTime Whether the controller displays remaining time instead of duration.
+   */
+  public void setControllerDisplayRemainingTime(boolean controllerDisplayRemainingTime) {
+    Assertions.checkStateNotNull(controller);
+    controller.setDisplayRemainingTime(controllerDisplayRemainingTime);
+  }
+  
+  /**
    * Sets the {@link StyledPlayerControlView.VisibilityListener}.
    *
    * <p>Removes any listener set by {@link

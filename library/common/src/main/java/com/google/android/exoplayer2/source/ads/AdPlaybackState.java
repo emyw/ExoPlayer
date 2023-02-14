@@ -595,7 +595,7 @@ public final class AdPlaybackState implements Bundleable {
    */
   public final int removedAdGroupCount;
 
-  private final AdGroup[] adGroups;
+  public final AdGroup[] adGroups;
 
   /**
    * Creates a new ad playback state with the specified ad group times.

@@ -100,6 +100,8 @@ public final class InitializationChunk extends Chunk {
       // Load and decode the initialization data.
       try {
         while (!loadCanceled && chunkExtractor.read(input)) {}
+      } catch(java.io.EOFException e) {
+        android.util.Log.e("InitializationChunk", "EOF Exception raised while reading initialization chunk");
       } finally {
         nextLoadPosition = input.getPosition() - dataSpec.position;
       }

@@ -333,6 +333,7 @@ public class PlayerControlView extends FrameLayout {
   private boolean showPreviousButton;
   private boolean showNextButton;
   private boolean showShuffleButton;
+  private boolean displayRemainingTime;
   private long hideAtMs;
   private long[] adGroupTimesMs;
   private boolean[] playedAdGroups;
@@ -341,6 +342,7 @@ public class PlayerControlView extends FrameLayout {
   private long currentWindowOffset;
   private long currentPosition;
   private long currentBufferedPosition;
+  private long currentDurationMs;
 
   public PlayerControlView(Context context) {
     this(context, /* attrs= */ null);
@@ -375,6 +377,8 @@ public class PlayerControlView extends FrameLayout {
     showPreviousButton = true;
     showNextButton = true;
     showShuffleButton = false;
+    displayRemainingTime = false;
+    currentDurationMs = 0;
     if (playbackAttrs != null) {
       TypedArray a =
           context
@@ -734,6 +738,19 @@ public class PlayerControlView extends FrameLayout {
     }
   }
 
+
+  /**
+   * Sets whether the remaining time is shown instead of the duration.
+   *
+   * @param displayRemainingTime Whether the remaining time is shown.
+   */
+  public void setDisplayRemainingTime(boolean displayRemainingTime) {
+    this.displayRemainingTime = displayRemainingTime;
+    if (!displayRemainingTime && durationView != null) {
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs));
+    }
+  }
+
   /**
    * Sets listener for the VR button.
    *
@@ -991,12 +1008,12 @@ public class PlayerControlView extends FrameLayout {
         durationUs += window.durationUs;
       }
     }
-    long durationMs = Util.usToMs(durationUs);
+    currentDurationMs = C.usToMs(durationUs);
     if (durationView != null) {
-      durationView.setText(Util.getStringForTime(formatBuilder, formatter, durationMs));
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs));
     }
     if (timeBar != null) {
-      timeBar.setDuration(durationMs);
+      timeBar.setDuration(currentDurationMs);
       int extraAdGroupCount = extraAdGroupTimesMs.length;
       int totalAdGroupCount = adGroupCount + extraAdGroupCount;
       if (totalAdGroupCount > adGroupTimesMs.length) {

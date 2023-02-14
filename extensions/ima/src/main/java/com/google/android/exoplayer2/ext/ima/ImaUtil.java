@@ -113,6 +113,7 @@ import java.util.Set;
     public final int mediaLoadTimeoutMs;
     public final boolean focusSkipButtonWhenAvailable;
     public final boolean playAdBeforeStartPosition;
+    public final boolean skipAdGroupOnSkipAd;
     public final int mediaBitrate;
     @Nullable public final Boolean enableContinuousPlayback;
     @Nullable public final List<String> adMediaMimeTypes;
@@ -130,6 +131,7 @@ import java.util.Set;
         int mediaLoadTimeoutMs,
         boolean focusSkipButtonWhenAvailable,
         boolean playAdBeforeStartPosition,
+        boolean skipAdGroupOnSkipAd,
         int mediaBitrate,
         @Nullable Boolean enableContinuousPlayback,
         @Nullable List<String> adMediaMimeTypes,
@@ -145,6 +147,7 @@ import java.util.Set;
       this.mediaLoadTimeoutMs = mediaLoadTimeoutMs;
       this.focusSkipButtonWhenAvailable = focusSkipButtonWhenAvailable;
       this.playAdBeforeStartPosition = playAdBeforeStartPosition;
+      this.skipAdGroupOnSkipAd = skipAdGroupOnSkipAd;
       this.mediaBitrate = mediaBitrate;
       this.enableContinuousPlayback = enableContinuousPlayback;
       this.adMediaMimeTypes = adMediaMimeTypes;

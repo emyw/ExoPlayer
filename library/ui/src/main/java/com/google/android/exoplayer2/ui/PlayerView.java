@@ -916,6 +916,16 @@ public class PlayerView extends FrameLayout implements AdViewProvider {
   }
 
   /**
+   * Sets whether the controller displays remaining time instead of duration.
+   *
+   * @param controllerDisplayRemainingTime Whether the controller displays remaining time instead of duration.
+   */
+  public void setControllerDisplayRemainingTime(boolean controllerDisplayRemainingTime) {
+    Assertions.checkStateNotNull(controller);
+    controller.setDisplayRemainingTime(controllerDisplayRemainingTime);
+  }
+  
+  /**
    * Sets the {@link PlayerControlView.VisibilityListener}.
    *
    * @param listener The listener to be notified about visibility changes, or null to remove the

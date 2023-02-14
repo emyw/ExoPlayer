@@ -326,6 +326,9 @@ public class StyledPlayerControlView extends FrameLayout {
   private long[] extraAdGroupTimesMs;
   private boolean[] extraPlayedAdGroups;
   private long currentWindowOffset;
+  
+  private boolean displayRemainingTime;
+  private long currentDurationMs;
 
   private boolean needToHideBars;
 
@@ -365,6 +368,8 @@ public class StyledPlayerControlView extends FrameLayout {
     boolean showSubtitleButton = false;
     boolean animationEnabled = true;
     boolean showVrButton = false;
+    displayRemainingTime = false;
+    currentDurationMs = 0;
 
     if (playbackAttrs != null) {
       TypedArray a =
@@ -855,6 +860,18 @@ public class StyledPlayerControlView extends FrameLayout {
   }
 
   /**
+   * Sets whether the remaining time is shown instead of the duration.
+   *
+   * @param displayRemainingTime Whether the remaining time is shown.
+   */
+  public void setDisplayRemainingTime(boolean displayRemainingTime) {
+    this.displayRemainingTime = displayRemainingTime;
+    if (!displayRemainingTime && durationView != null) {
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs));
+    }
+  }
+
+  /**
    * Sets listener for the VR button.
    *
    * @param onClickListener Listener for the VR button, or null to clear the listener.
@@ -1199,12 +1216,12 @@ public class StyledPlayerControlView extends FrameLayout {
         durationUs += window.durationUs;
       }
     }
-    long durationMs = Util.usToMs(durationUs);
+    currentDurationMs = Util.usToMs(durationUs);
     if (durationView != null) {
-      durationView.setText(Util.getStringForTime(formatBuilder, formatter, durationMs));
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs));
     }
     if (timeBar != null) {
-      timeBar.setDuration(durationMs);
+      timeBar.setDuration(currentDurationMs);
       int extraAdGroupCount = extraAdGroupTimesMs.length;
       int totalAdGroupCount = adGroupCount + extraAdGroupCount;
       if (totalAdGroupCount > adGroupTimesMs.length) {
@@ -1231,6 +1248,9 @@ public class StyledPlayerControlView extends FrameLayout {
     }
     if (positionView != null && !scrubbing) {
       positionView.setText(Util.getStringForTime(formatBuilder, formatter, position));
+    }
+    if (durationView != null && !scrubbing && displayRemainingTime) {
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs - position));
     }
     if (timeBar != null) {
       timeBar.setPosition(position);
