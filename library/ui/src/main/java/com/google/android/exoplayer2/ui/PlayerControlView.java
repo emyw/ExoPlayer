@@ -1049,6 +1049,9 @@ public class PlayerControlView extends FrameLayout {
     if (positionView != null && !scrubbing && positionChanged) {
       positionView.setText(Util.getStringForTime(formatBuilder, formatter, position));
     }
+    if (durationView != null && !scrubbing && displayRemainingTime) {
+      durationView.setText(Util.getStringForTime(formatBuilder, formatter, currentDurationMs - position));
+    }
     if (timeBar != null) {
       timeBar.setPosition(position);
       timeBar.setBufferedPosition(bufferedPosition);

@@ -1327,7 +1327,11 @@ public final class CastPlayer extends BasePlayer {
 
     @Override
     public void onStatusUpdated() {
-      updateInternalStateAndNotifyIfChanged();
+      try {
+        updateInternalStateAndNotifyIfChanged();
+      } catch (IllegalStateException e) {
+        Log.e(TAG, "onStatusUpdated Error", e);
+      }
     }
 
     @Override
