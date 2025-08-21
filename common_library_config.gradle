@@ -17,6 +17,12 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion project.ext.compileSdkVersion
 
+    // Get namespace from constants.gradle
+    def ns = project.ext.moduleNamespaces?.get(project.path)
+    if (ns) {
+        namespace = ns
+    }
+
     defaultConfig {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
@@ -39,6 +45,10 @@ android {
             jvmArgs "-Xmx2g"
         }
         unitTests.includeAndroidResources true
+    }
+    
+    publishing {
+        singleVariant("release")
     }
 }
 

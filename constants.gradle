@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 project.ext {
- // ExoPlayer version and version code.
- releaseVersion = '2.19.0'
- releaseVersionCode = 2_019_000
+    // ExoPlayer version and version code.
+    releaseVersion = '2.19.0'
+    releaseVersionCode = 2_019_000
     minSdkVersion = 16
     appTargetSdkVersion = 33
     // API version before restricting local file access.
@@ -59,7 +59,49 @@ project.ext {
     truthVersion = '1.1.3'
     okhttpVersion = '4.11.0'
     modulePrefix = ':'
- if (gradle.ext.has('exoplayerModulePrefix')) {
-     modulePrefix += gradle.ext.exoplayerModulePrefix
- }
+    if (gradle.ext.has('exoplayerModulePrefix')) {
+        modulePrefix += gradle.ext.exoplayerModulePrefix
+    }
+
+    moduleNamespaces = [
+        // extensions (libs)
+        ':exoplayer-extension-av1'         : 'com.google.android.exoplayer2.ext.av1',
+        ':exoplayer-extension-cast'        : 'com.google.android.exoplayer2.ext.cast',
+        ':exoplayer-extension-cronet'      : 'com.google.android.exoplayer2.ext.cronet',
+        ':exoplayer-extension-ffmpeg'      : 'com.google.android.exoplayer2.ext.ffmpeg',
+        ':exoplayer-extension-flac'        : 'com.google.android.exoplayer2.ext.flac',
+        ':exoplayer-extension-ima'         : 'com.google.android.exoplayer2.ext.ima',
+        ':exoplayer-extension-leanback'    : 'com.google.android.exoplayer2.ext.leanback',
+        ':exoplayer-extension-media2'      : 'com.google.android.exoplayer2.ext.media2',
+        ':exoplayer-extension-mediasession': 'com.google.android.exoplayer2.ext.mediasession',
+        ':exoplayer-extension-okhttp'      : 'com.google.android.exoplayer2.ext.okhttp',
+        ':exoplayer-extension-opus'        : 'com.google.android.exoplayer2.ext.opus',
+        ':exoplayer-extension-rtmp'        : 'com.google.android.exoplayer2.ext.rtmp',
+        ':exoplayer-extension-vp9'         : 'com.google.android.exoplayer2.ext.vp9',
+        ':exoplayer-extension-workmanager' : 'com.google.android.exoplayer2.ext.workmanager',
+
+        // libraries (libs)
+        ':exoplayer-library'                : 'com.google.android.exoplayer2.library',
+        ':exoplayer-library-common'         : 'com.google.android.exoplayer2.common',
+        ':exoplayer-library-container'      : 'com.google.android.exoplayer2.container',
+        ':exoplayer-library-core'           : 'com.google.android.exoplayer2.core',
+        ':exoplayer-library-dash'           : 'com.google.android.exoplayer2.source.dash',
+        ':exoplayer-library-database'       : 'com.google.android.exoplayer2.database',
+        ':exoplayer-library-datasource'     : 'com.google.android.exoplayer2.upstream',
+        ':exoplayer-library-decoder'        : 'com.google.android.exoplayer2.decoder',
+        ':exoplayer-library-effect'         : 'com.google.android.exoplayer2.effect',
+        ':exoplayer-library-extractor'      : 'com.google.android.exoplayer2.extractor',
+        ':exoplayer-library-hls'            : 'com.google.android.exoplayer2.source.hls',
+        ':exoplayer-library-muxer'          : 'com.google.android.exoplayer2.muxer',
+        ':exoplayer-library-rtsp'           : 'com.google.android.exoplayer2.rtsp',
+        ':exoplayer-library-smoothstreaming': 'com.google.android.exoplayer2.source.smoothstreaming',
+        ':exoplayer-library-transformer'    : 'com.google.android.exoplayer2.transformer',
+        ':exoplayer-library-ui'             : 'com.google.android.exoplayer2.ui',
+
+        // test/support modules
+        ':exoplayer-playbacktests'      : 'com.google.android.exoplayer2.playbacktests',
+        ':exoplayer-robolectricutils'   : 'com.google.android.exoplayer2.robolectricutils',
+        ':exoplayer-testutils'          : 'com.google.android.exoplayer2.testutil',
+        ':exoplayer-testdata'           : 'com.google.android.exoplayer2.testdata', // if this is Android; ignore if pure JVM
+    ]
 }

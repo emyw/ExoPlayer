@@ -15,7 +15,7 @@
 
 android {
     sourceSets {
- androidTest.assets.srcDir '../../testdata/src/test/assets/'
+        androidTest.assets.srcDir '../../testdata/src/test/assets/'
     }
 }
 
